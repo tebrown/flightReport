@@ -1,0 +1,11 @@
+# Define database info
+baseStation = "/var/modesmixer/basestation.sqb"
+flightRoute = "/var/modesmixer/flightroute.sqb"
+#dataBase = "src/basestation.sqb"
+
+# Define mail info
+sendMail = True
+smtpserver = 'smtp.localhost'
+recipients = ['recipientA@localhost', 'recipientB@localhost']
+sender = 'Flights Report <flights@localhost>'
+smtpAuth = ()

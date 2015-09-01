@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/python
 
 import sqlite3 as sqlite
 import os
@@ -20,6 +20,7 @@ from reportlab.platypus import Paragraph
 from reportlab.platypus import Table
 from reportlab.platypus import TableStyle
 from reportlab.lib.styles import getSampleStyleSheet
+import config
 
 
 # Page setup
@@ -42,18 +43,6 @@ platform = sys.platform
 runtime_dir = os.path.dirname(sys.argv[0])
 abs_path = os.path.abspath(runtime_dir)
 tz = tzname[daylight]
-
-# Define database info
-baseStation = "/var/modesmixer/basestation.sqb"
-flightRoute = "/var/modesmixer/flightroute.sqb"
-#dataBase = "src/basestation.sqb"
-
-# Define mail info
-sendMail = True
-smtpserver = 'smtp.rochester.rr.com'
-recipients = ['teb@jetcom.org', 'emb@jetcom.org']
-sender = 'Flights Report <flights@jetcom.org>'
-smtpAuth = ()
 
 # Define report dates
 rptDate = ((date.today() - timedelta(1)).strftime('%A  %B %d, %Y ')) + tz
@@ -85,7 +74,7 @@ def calcMsgCount(value):
 
 
 def createDoc(rows, rptType):
-    flightroute = dbMgr(flightRoute)
+    flightroute = dbMgr(config.flightRoute)
     doc = SimpleDocTemplate(rptType + baseReport,
                             rightMargin=margin,
                             leftMargin=margin,
@@ -303,14 +292,14 @@ def dbExtract(db, rptType):
 for rpt in rpts:
     rptType = rpt
 
-    rows, rptType = dbExtract(baseStation, rptType)
+    rows, rptType = dbExtract(config.baseStation, rptType)
     os.nice(15)
     createDoc(rows, rptType)
 
-if sendMail == True:
+if config.sendMail:
     msg = email.mime.Multipart.MIMEMultipart()
-    msg['From'] = sender
-    msg['To'] = ", ".join(recipients)
+    msg['From'] = config.sender
+    msg['To'] = ", ".join(config.recipients)
     msg['Subject'] = "Flight Report for " + rptDate
 
     # body = email.mime.text.MIMEText("Plane report")
@@ -323,9 +312,9 @@ if sendMail == True:
         att.add_header('Content-Disposition', 'attachment', filename=rpt + baseReport)
         msg.attach(att)
 
-    s = smtplib.SMTP(smtpserver)
-    if smtpAuth:
+    s = smtplib.SMTP(config.smtpserver)
+    if config.smtpAuth:
         s.starttls()
-        s.login(smtpAuth) 
-    s.sendmail(sender, recipients, msg.as_string())
+        s.login(config.smtpAuth) 
+    s.sendmail(config.sender, config.recipients, msg.as_string())
     s.quit()
