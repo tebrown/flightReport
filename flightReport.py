@@ -28,7 +28,7 @@ margin = .2 * inch
 baseReport = 'FlightsReport.pdf'
 page_font = 'Courier'
 page_font_size = int(7)
-rpts = ['all', 'poi', 'chk']
+rpts = ['All', 'POI', 'CHK']
 
 # Define title attributes
 styles = getSampleStyleSheet()
@@ -276,11 +276,11 @@ def createDoc(rows, rptType):
 def dbExtract(db, rptType):
     basestation = dbMgr(db)
     rows = []
-    if rptType == 'all':
+    if rptType == 'All':
         SQL = "select * from Aircraft INNER JOIN Flights ON (Aircraft.AircraftID=Flights.AircraftID) where (Flights.EndTime like '" + sqlDate + "'" + " OR Flights.StartTime like '" + sqlDate + "'" + ") ORDER BY Flights.StartTime"
-    elif rptType == 'poi':
+    elif rptType == 'POI':
         SQL = "select * from Aircraft INNER JOIN Flights ON (Aircraft.AircraftID=Flights.AircraftID) where (Flights.EndTime like '" + sqlDate + "'" + " OR Flights.StartTime like '" + sqlDate + "'" + ")  and Aircraft.Interested = '1' ORDER BY Flights.StartTime"
-    elif rptType == 'chk':
+    elif rptType == 'CHK':
         SQL = "select * from Aircraft INNER JOIN Flights ON (Aircraft.AircraftID=Flights.AircraftID) where  (Flights.EndTime like '" + sqlDate + "'" + " OR Flights.StartTime like '" + sqlDate + "'" + ") and Aircraft.Registration is NULL ORDER BY Flights.StartTime"
 
     rows = basestation.query(SQL).fetchall()
